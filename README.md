@@ -33,31 +33,27 @@ The project is about 3,400 lines of TypeScript and CSS, type-checked in strict m
 ## Architecture
 
 ```mermaid
-flowchart LR
-  subgraph Browser
-    UI["React UI<br/>dialogue box, sprites, voice"]
-  end
+flowchart TB
+  UI["Browser<br/>React page: dialogue box, sprites, voice"]
+
   subgraph Server["Node.js server (Hono)"]
-    API["Chat API<br/>streams NDJSON"]
-    Prompt["Prompt builder<br/>persona, memories, summary, scene"]
-    Recall["Line recall<br/>vector search"]
+    API["Chat API"] --> Recall["Line recall<br/>vector search"] --> Prompt["Prompt builder"]
     Parser["Reply parser<br/>expression tags"]
     Jobs["Background jobs<br/>summaries, memories"]
   end
-  DB[("SQLite")]
-  Files["characters/ and backgrounds/<br/>persona, lines, sprites, voices, scenes"]
-  Ollama["Ollama<br/>Rocinante-X 12B and nomic-embed-text on the GPU"]
 
-  UI -- "message + current scene" --> API
-  API --> Recall -- "closest lines" --> Prompt
-  Recall <-- "embeddings" --> Ollama
-  Recall <--> DB
-  API --> Prompt --> Ollama
-  Ollama -- "token stream" --> Parser -- "expression and text events" --> UI
-  API <--> DB
-  Jobs <--> DB
-  Jobs --> Ollama
-  Prompt --> Files
+  Ollama["Ollama on the GPU<br/>Rocinante-X 12B, nomic-embed-text"]
+  DB[("SQLite<br/>chats, memories, line vectors")]
+  Files["characters/ and backgrounds/<br/>persona, lines, sprites, voices, scenes"]
+
+  UI -- "message + scene" --> API
+  Prompt -- "prompt" --> Ollama
+  Ollama -- "token stream" --> Parser
+  Parser -- "text + expressions" --> UI
+  Server <--> DB
+  Files --> Server
+  Recall -. "embeddings" .-> Ollama
+  Jobs -.-> Ollama
 ```
 
 How a reply gets to the screen:
