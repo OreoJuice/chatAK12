@@ -1,0 +1,39 @@
+{
+  "_about": "Voice clips (Japanese, from the game) played when her expression changes, grouped by expression. Each entry is a file in voices/ and the English line it says.",
+  "default": {
+    "gain.ogg": "Hmm... a new Commander? How long will you pique my interest, we shall see~",
+    "hello.ogg": "Is that you, Commander? I didn't even have to look.",
+    "dialoguewedding.ogg": "...Hmm? Commander, are you peeking at me? Why not do it openly? We're used to each other by now, right?"
+  },
+  "happy": {
+    "valentine.ogg": "That AN-94 forced this chocolate on me. Ah, Commander, are you hungry? I've got sweets.",
+    "tanabata.ogg": "I don't remember what I wished for. More importantly, let's go to the festival already.",
+    "allhallows.ogg": "What is it? Ah, it's just candy. Ah, look over there! There's a shrine maiden!",
+    "operationover.ogg": "Finally done. What's up next?"
+  },
+  "neutral": {
+    "dialogue1.ogg": "To avoid wasting processing power, I usually keep my eyes shut. Don't worry, it doesn't affect my sight or judgment.",
+    "dialogue2.ogg": "There's no need for everyone to push themselves so hard. After all, not everyone was chosen like me.",
+    "feed.ogg": "A performance upgrade is wasted without tactical understanding.",
+    "combine.ogg": "Dummies can't compare to my performance. I'll have to rely on myself, of course.",
+    "operationbegin.ogg": "Missions like this don't need any deep computation.",
+    "fix.ogg": "Verifying mission data.",
+    "win.ogg": "Saving mission results... Save complete.",
+    "blackaction.ogg": "Starting automated operations."
+  },
+  "question": {
+    "dialogue3.ogg": "Hmm? Why are you being sneaky, Commander? Is something interesting happening?",
+    "buildover.ogg": "A new employee? Hurry up and introduce yourself!",
+    "newyear.ogg": "Hatsumode? I'll pass. I already went.",
+    "formation.ogg": "If only that person were here too..."
+  },
+  "serious": {
+    "goattack.ogg": "Time to get serious. Mission start.",
+    "meet.ogg": "Prepare for attack.",
+    "skill1.ogg": "Radar scan, start.",
+    "skill2.ogg": "Deep computation mode.",
+    "skill3.ogg": "Removing fire rate limit.",
+    "break.ogg": "Damage exceeds predicted levels.",
+    "retreat.ogg": "Mission failed, preparing to retreat."
+  }
+}

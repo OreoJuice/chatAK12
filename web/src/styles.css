@@ -1,0 +1,760 @@
+/* Modeled on Girls' Frontline's story screen. */
+
+:root {
+  --gf-yellow: #fdb300;
+  --gf-panel: rgba(0, 0, 0, 0.5);
+  --gf-panel-solid: rgba(20, 22, 28, 0.92);
+  --gf-line: rgba(235, 240, 245, 0.7);
+  /* The dialogue box's width, and the dot grid every panel shares: 0.58% of that width apart. */
+  --box-width: max(min(67vw, 1320px), min(100vw - 24px, 760px));
+  --dot-pitch: max(4px, calc(var(--box-width) * 0.0058));
+  --gf-dots: radial-gradient(circle, rgba(255, 255, 255, 0.13) 0 0.55px, transparent 1px) 0 0 / var(--dot-pitch)
+    var(--dot-pitch);
+  --text: #f6f6f6;
+  --muted: rgba(246, 246, 246, 0.6);
+  --error: #ff7a6b;
+  /* The game's labels use a condensed DIN-style face; Bahnschrift ships with Windows. */
+  --ui-font: Bahnschrift, "DIN Condensed", "Roboto Condensed", "Arial Narrow", sans-serif;
+  font-family: "Segoe UI", "Noto Sans", "Source Sans 3", Helvetica, Arial, sans-serif;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: #000;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.stage {
+  position: relative;
+  height: 100%;
+  /* clip, not hidden: hidden still lets focus and scrollTo scroll the oversized sprite into view. */
+  overflow: clip;
+  background-color: #111;
+  background-size: cover;
+  background-position: center;
+}
+
+/* The sprites are full-body portraits; scale them up so she's framed from the waist up. */
+.sprite {
+  position: absolute;
+  top: 4vh;
+  left: 50%;
+  height: 180vh;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---- Top-left icon buttons ---- */
+
+.hud {
+  --size: clamp(54px, 4.6vw, 82px);
+  position: absolute;
+  top: clamp(10px, 1.8vh, 24px);
+  left: clamp(10px, 1.5vw, 32px);
+  /* Above the overlays, so the buttons can switch panels. */
+  z-index: 5;
+  display: flex;
+  gap: clamp(12px, 2.5vw, 44px);
+}
+
+.icon-button {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  padding: 0;
+  border: 2px solid var(--gf-line);
+  /* About 12% white, measured from the game's buttons. */
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+}
+
+.icon-button svg {
+  position: absolute;
+  top: 9%;
+  left: 9%;
+  width: 46%;
+  height: 46%;
+  fill: none;
+  stroke: currentColor;
+  /* A faint dark edge keeps the white icon readable over light backgrounds. */
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.7));
+}
+
+.icon-button span {
+  position: absolute;
+  right: 8%;
+  bottom: 3%;
+  font-family: var(--ui-font);
+  font-size: calc(var(--size) * 0.3);
+  font-stretch: condensed;
+  line-height: 1;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.icon-button[aria-expanded="true"] {
+  border-color: var(--gf-yellow);
+  color: var(--gf-yellow);
+}
+
+/* The voice button and volume slider when muted. */
+.icon-button.off,
+.volume.off {
+  opacity: 0.55;
+}
+
+/* Volume slider, built like the icon buttons. */
+.volume {
+  position: relative;
+  display: block;
+  width: calc(var(--size) * 2.2);
+  height: var(--size);
+  border: 2px solid var(--gf-line);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.volume:focus-within {
+  border-color: var(--gf-yellow);
+}
+
+@media (hover: hover) {
+  .volume:hover {
+    border-color: var(--gf-yellow);
+  }
+}
+
+.volume-value,
+.volume-label {
+  position: absolute;
+  font-family: var(--ui-font);
+  font-size: calc(var(--size) * 0.3);
+  font-stretch: condensed;
+  line-height: 1;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.volume-value {
+  top: 9%;
+  left: 9%;
+}
+
+.volume-label {
+  right: 8%;
+  bottom: 3%;
+}
+
+.volume input {
+  --track: rgba(255, 255, 255, 0.35);
+  position: absolute;
+  top: 50%;
+  left: 9%;
+  width: 82%;
+  height: 20px;
+  margin: 0;
+  transform: translateY(-50%);
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.volume input:focus {
+  outline: none;
+}
+
+.volume input::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(90deg, var(--gf-yellow) var(--fill), var(--track) var(--fill));
+}
+
+.volume input::-webkit-slider-thumb {
+  width: 7px;
+  height: 16px;
+  margin-top: -6px;
+  border: none;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  transform: skewX(-20deg);
+  appearance: none;
+}
+
+.volume input::-moz-range-track {
+  height: 4px;
+  background: var(--track);
+}
+
+.volume input::-moz-range-progress {
+  height: 4px;
+  background: var(--gf-yellow);
+}
+
+.volume input::-moz-range-thumb {
+  width: 7px;
+  height: 16px;
+  border: none;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  transform: skewX(-20deg);
+}
+
+/* Only real pointers get hover styles; on touch screens they would stick after a tap. */
+@media (hover: hover) {
+  .icon-button:hover {
+    border-color: var(--gf-yellow);
+    color: var(--gf-yellow);
+  }
+}
+
+/* EXIT, where the game has its SKIP button. */
+.exit-button {
+  position: absolute;
+  top: clamp(10px, 1.8vh, 24px);
+  right: clamp(10px, 1.5vw, 32px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.15em 0.45em 0.15em 0.6em;
+  border: 2px solid var(--gf-line);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.35);
+  font-family: var(--ui-font);
+  font-size: clamp(1.05rem, 1.7vw, 1.7rem);
+  font-stretch: condensed;
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.exit-button svg {
+  width: 0.9em;
+  height: 0.9em;
+  fill: none;
+  stroke: currentColor;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.7));
+}
+
+.exit-button[aria-expanded="true"] {
+  border-color: var(--gf-yellow);
+  color: var(--gf-yellow);
+}
+
+@media (hover: hover) {
+  .exit-button:hover {
+    border-color: var(--gf-yellow);
+    color: var(--gf-yellow);
+  }
+}
+
+.panel.narrow {
+  width: min(480px, 100%);
+}
+
+.exit-question,
+.signed-off {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.exit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* Smaller outlined text button, like the game's SKIP. */
+.text-button {
+  padding: 4px 14px;
+  border: 2px solid var(--gf-line);
+  background: rgba(20, 24, 32, 0.4);
+  font-family: var(--ui-font);
+  font-size: 1.1rem;
+  font-stretch: condensed;
+  letter-spacing: 0.04em;
+}
+
+.text-button:hover {
+  border-color: var(--gf-yellow);
+  color: var(--gf-yellow);
+}
+
+/* ---- Dialogue box ---- */
+
+/* Measured from the game's box and given in cqw, so the proportions hold at any size. */
+.textbox {
+  container-type: inline-size;
+  --tab-width: 34.4cqw;
+  --tab-height: max(22px, 3.05cqw);
+  /* The tab's edge drops at 45 degrees. */
+  --slant: var(--tab-height);
+  --strip: max(8px, 1.4cqw);
+  position: absolute;
+  bottom: 4vh;
+  left: 50%;
+  z-index: 2;
+  width: var(--box-width);
+  height: clamp(250px, 37vh, 380px);
+  transform: translateX(-50%);
+}
+
+/* The 1px outline, drawn as a ring, since a drop-shadow would tint the see-through panel. */
+.textbox-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--gf-line);
+  pointer-events: none;
+  clip-path: polygon(
+    evenodd,
+    0 0,
+    var(--tab-width) 0,
+    calc(var(--tab-width) + var(--slant)) var(--tab-height),
+    100% var(--tab-height),
+    100% 100%,
+    0 100%,
+    0 0,
+    1px 1px,
+    1px calc(100% - 1px),
+    calc(100% - 1px) calc(100% - 1px),
+    calc(100% - 1px) calc(var(--tab-height) + 1px),
+    calc(var(--tab-width) + var(--slant) - 0.4px) calc(var(--tab-height) + 1px),
+    calc(var(--tab-width) - 0.4px) 1px,
+    1px 1px
+  );
+}
+
+.textbox::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* A fine dot grid, about 7px apart in the game's box. */
+  background:
+    var(--gf-dots),
+    var(--gf-panel);
+  clip-path: polygon(
+    0 0,
+    var(--tab-width) 0,
+    calc(var(--tab-width) + var(--slant)) var(--tab-height),
+    100% var(--tab-height),
+    100% 100%,
+    0 100%
+  );
+}
+
+/* The yellow strip along the top edge, continuing the tab's slant. */
+.textbox::after {
+  content: "";
+  position: absolute;
+  top: var(--tab-height);
+  left: calc(var(--tab-width) + var(--slant));
+  right: 1px;
+  height: var(--strip);
+  background: rgba(253, 179, 0, 0.92);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--strip) 100%);
+}
+
+/* Capitals 2.47cqw tall, 3.87cqw from the left, 1.4cqw below the tab's top, as in the game. */
+.nameplate {
+  position: absolute;
+  top: 0.64cqw;
+  left: 3.87cqw;
+  max-width: calc(var(--tab-width) - 3.87cqw);
+  font-size: max(1.15rem, 3.53cqw);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.line-text {
+  position: absolute;
+  inset: calc(var(--tab-height) + var(--strip) + clamp(8px, 1.6vh, 20px)) 3.87cqw 76px 3.87cqw;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  margin: 0;
+  overflow-y: auto;
+  font-size: clamp(1.05rem, 1.85vw, 2.1rem);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Actions in *asterisks*, in the box and the log. */
+.line-text em,
+.log-entry em {
+  color: var(--muted);
+}
+
+.line-text.error {
+  color: var(--error);
+}
+
+.typing {
+  color: var(--muted);
+  letter-spacing: 0.2em;
+}
+
+/* The G.F.system mark; GfBar in icons.tsx draws the bar. */
+.gf-mark {
+  position: absolute;
+  right: 4cqw;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: max(1px, 0.15cqw);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: max(9px, 0.95cqw);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.gf-mark svg {
+  display: block;
+  width: max(78px, 9.1cqw);
+  height: auto;
+}
+
+/* ---- Reply field, inside the box along its bottom edge ---- */
+
+.composer {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 10px;
+  display: flex;
+  height: 36px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 12px 0 0;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.composer input::placeholder {
+  color: var(--muted);
+}
+
+.composer button {
+  align-self: center;
+  height: 28px;
+  padding: 0 22px;
+  border: none;
+  background: var(--gf-yellow);
+  color: #111;
+  font-family: var(--ui-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-stretch: condensed;
+  letter-spacing: 0.06em;
+}
+
+.composer button:hover:not(:disabled) {
+  background: #ffc933;
+}
+
+/* ---- Overlays: menu and log ---- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: calc(clamp(10px, 1.8vh, 24px) * 2 + clamp(54px, 4.6vw, 82px)) 16px 16px;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(820px, 100%);
+  max-height: 100%;
+  border: 2px solid var(--gf-line);
+  background: var(--gf-dots), var(--gf-panel-solid);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 10px 22px;
+  border-bottom: 4px solid var(--gf-yellow);
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-family: var(--ui-font);
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-stretch: condensed;
+  letter-spacing: 0.04em;
+}
+
+.panel-body {
+  overflow-y: auto;
+  padding: 16px 22px 22px;
+}
+
+.section-label {
+  margin: 0 0 10px;
+  font-family: var(--ui-font);
+  font-size: 0.95rem;
+  font-stretch: condensed;
+  letter-spacing: 0.06em;
+  color: var(--gf-yellow);
+}
+
+.backgrounds {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.backgrounds button {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: none;
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.backgrounds button.selected,
+.backgrounds button:hover {
+  box-shadow: 0 0 0 2px var(--gf-yellow);
+}
+
+.backgrounds img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.backgrounds span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.7);
+  font-family: var(--ui-font);
+  font-size: 0.8rem;
+  font-stretch: condensed;
+  text-align: left;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+.hint.small {
+  margin: -4px 0 12px;
+  font-size: 0.85rem;
+}
+
+.panel-error {
+  margin: 0 0 12px;
+  color: var(--error);
+}
+
+.memory-label {
+  margin-top: 26px;
+}
+
+/* Rows in the CHATS panel: conversations and memories, each with a delete button. */
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.row-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 4px;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+button.row-main:hover:not(:disabled) .row-title {
+  color: var(--gf-yellow);
+}
+
+.row-main:disabled {
+  opacity: 1;
+}
+
+.row.current {
+  box-shadow: inset 3px 0 0 var(--gf-yellow);
+}
+
+.row.current .row-main,
+.row.confirming .row-main {
+  padding-left: 12px;
+}
+
+.row-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-main.static .row-title {
+  white-space: normal;
+}
+
+.row-meta {
+  font-family: var(--ui-font);
+  font-size: 0.8rem;
+  font-stretch: condensed;
+  color: var(--muted);
+}
+
+.row-delete {
+  flex: none;
+  width: 40px;
+  border: none;
+  background: none;
+  color: var(--muted);
+}
+
+.row-delete:hover:not(:disabled) {
+  color: var(--error);
+}
+
+/* A conversation row asking to confirm its deletion. */
+.row.confirming {
+  box-shadow: inset 3px 0 0 var(--error);
+}
+
+.row.confirming .row-title {
+  color: var(--error);
+}
+
+.row-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+}
+
+.row-confirm {
+  padding: 5px 14px;
+  border: 2px solid var(--error);
+  background: var(--error);
+  color: #111;
+  font-family: var(--ui-font);
+  font-weight: 700;
+  font-stretch: condensed;
+  letter-spacing: 0.04em;
+}
+
+.row-confirm:hover:not(:disabled) {
+  background: #ff9a8e;
+}
+
+.wide-button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 10px;
+  border: none;
+  background: var(--gf-yellow);
+  color: #111;
+  font-family: var(--ui-font);
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-stretch: condensed;
+  letter-spacing: 0.06em;
+}
+
+.wide-button:hover:not(:disabled) {
+  background: #ffc933;
+}
+
+/* Log entries read like the dialogue box: the speaker's name, then the line. */
+.log-entry {
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.05rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.log-speaker {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gf-yellow);
+}
+
+.log-entry.user .log-speaker {
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .textbox {
+    --tab-width: 45cqw;
+  }
+
+  /* Four buttons and the slider still fit in one row on a phone. */
+  .volume {
+    width: calc(var(--size) * 1.5);
+  }
+
+  /* That row uses the whole width, so EXIT goes just below its right end. */
+  .exit-button {
+    top: calc(clamp(10px, 1.8vh, 24px) + var(--size, 54px) + 10px);
+  }
+}

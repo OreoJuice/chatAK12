@@ -1,0 +1,20 @@
+# Installed packages and the built page
+node_modules/
+dist/
+
+# Personal data: your conversations, what she remembers about you, and cached thumbnails
+data/
+
+# Your local settings (.env.example, with the defaults, is shared)
+.env
+.env.*
+!.env.example
+
+# Logs and system files
+*.log
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Ready-to-run copies made by npm run package
+release/
