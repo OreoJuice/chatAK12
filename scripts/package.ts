@@ -84,6 +84,11 @@ remembers about you are kept in the \`data\` folder, which is created on first u
 settings and how to work on the code. The page comes prebuilt, and \`start.cmd\` rebuilds it after you
 change anything in \`web\`.
 
+## Credits
+
+AK-12's lines come from
+[GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract).
+
 ## License
 
 The source code is under the [MIT License](LICENSE). *Girls' Frontline* characters, artwork and voice

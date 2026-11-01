@@ -187,7 +187,7 @@ Copy `.env.example` to `.env` and change what you need. Every setting is optiona
 | --- | --- |
 | `characters/ak12/persona.md` | Her personality and character sheet, written from her in-game dialogue. The `# Heading` is her display name. Edits apply on the next message. |
 | `characters/ak12/sprites/` | One image per expression. The file name is the expression name, and the model picks from whatever is here. `default.png` is used when it doesn't pick one. |
-| `characters/ak12/lines.json` | Her lines from the game, recalled by meaning for each message. |
+| `characters/ak12/lines.json` | Her lines from the game, recalled by meaning for each message. I got them with [GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract). |
 | `characters/ak12/expressions.json` | What each sprite looks like, so the model picks fitting expressions. |
 | `characters/ak12/voices/` + `voices.json` | Her voice clips (Japanese, from the game), grouped by expression. |
 | `backgrounds/` + `scenes.json` | Background images and what each one shows. Add or remove files and reload the page. |
@@ -210,6 +210,7 @@ It makes a ready-to-run copy in `release/chatAK12` and `release/chatAK12.zip`, w
 ## Credits
 
 - *Girls' Frontline* characters, artwork and voice lines belong to MICA Team and Sunborn Network. This is a non-commercial fan project, not affiliated with or endorsed by them. Sprites, backgrounds and voice clips came from the game and the [IOP Wiki](https://iopwiki.com).
+- AK-12's lines come from [GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract).
 - [Rocinante-X 12B](https://huggingface.co/TheDrummer/Rocinante-X-12B-v1-GGUF) by TheDrummer.
 
 ## License
