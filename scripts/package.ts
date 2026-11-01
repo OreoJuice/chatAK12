@@ -86,8 +86,9 @@ change anything in \`web\`.
 
 ## Credits
 
-AK-12's lines come from
-[GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract).
+AK-12's lines were extracted with
+[GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract), which pulls
+its data from [gf-data-us](https://github.com/gf-data-tools/gf-data-us).
 
 ## License
 

@@ -210,7 +210,7 @@ It makes a ready-to-run copy in `release/chatAK12` and `release/chatAK12.zip`, w
 ## Credits
 
 - *Girls' Frontline* characters, artwork and voice lines belong to MICA Team and Sunborn Network. This is a non-commercial fan project, not affiliated with or endorsed by them. Sprites, backgrounds and voice clips came from the game and the [IOP Wiki](https://iopwiki.com).
-- AK-12's lines come from [GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract).
+- AK-12's lines were extracted with [GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract), which pulls its data from [gf-data-us](https://github.com/gf-data-tools/gf-data-us).
 - [Rocinante-X 12B](https://huggingface.co/TheDrummer/Rocinante-X-12B-v1-GGUF) by TheDrummer.
 
 ## License
