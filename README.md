@@ -13,7 +13,7 @@ The model runs on your graphics card with [Ollama](https://ollama.com), and conv
 - The model tags each reply with a facial expression and the sprite switches to match, even mid-reply. Invented tags such as `[smug]` map to the closest real sprite.
 - A fitting voice clip from the game plays when her expression changes, with mute and volume controls.
 - You can choose from 20 backgrounds. She knows where you are and notices when you move.
-- Each message is matched by meaning against 1,969 of her lines from the game (retrieval-augmented generation). The closest lines go along with it, so she talks about people and events the way she did in the story.
+- Each message is matched by meaning against 1,976 of her lines from the game (retrieval-augmented generation). The closest lines go along with it, so she talks about people and events the way she did in the story.
 - Lasting facts you mention, such as your name, job or pets, are saved and come back in later conversations. Long chats are summarized to fit the model's context window.
 - You can browse, reopen and delete past conversations, read the full log, and see or delete what she remembers.
 - `start.cmd` installs what's missing, starts Ollama, offers to download the models and opens the app. The EXIT button unloads the models and shuts everything down.
@@ -86,7 +86,7 @@ Tokens arrive in arbitrary pieces (`[`, `ser`, `ious]`), so a small state machin
 
 ### Line recall
 
-Her 1,969 usable lines are embedded once with nomic-embed-text. The vectors are cached in SQLite, so later starts load them in a moment. Each message is embedded and compared with every line by cosine similarity in plain TypeScript, with no vector database, and the whole search takes about 15 ms.
+Her 1,976 usable lines are embedded once with nomic-embed-text. The vectors are cached in SQLite, so later starts load them in a moment. Each message is embedded and compared with every line by cosine similarity in plain TypeScript, with no vector database, and the whole search takes about 15 ms.
 
 The top five lines above a threshold go with the latest message. They stay out of the character sheet so the prompt cache keeps working. I set the threshold from measured scores: lines about what was asked score 0.65 to 0.85 ("Tell me about AN-94", "Why do you keep your eyes closed?"), while small talk like "hi" only finds loose matches around 0.55 to 0.63 and gets no lines. The embedding model takes 340 MB of video memory and stays loaded beside the chat model.
 
