@@ -4,19 +4,19 @@ A visual-novel style AI companion for talking with AK-12 from *Girls' Frontline*
 
 ![chatAK12: AK-12 replying in the game-style dialogue box](docs/screenshot.jpg)
 
-The model runs on your graphics card with [Ollama](https://ollama.com), and conversations stay in a local database. You don't need a cloud service, an account or an API key.
+The model runs on your graphics card with [Ollama](https://ollama.com), and conversations stay in a local database. You don't need a cloud service, an account, or an API key.
 
 ## Features
 
-- The dialogue box, name tab, icon buttons and "G.F.system" mark were measured from the game's UI and rebuilt in CSS, so they stay sharp at any window size and on phones.
+- The dialogue box, name tab, icon buttons, and "G.F.system" mark were measured from the game's UI and rebuilt in CSS, so they stay sharp at any window size and on phones.
 - Replies stream in as they're generated, usually starting within about 0.3 seconds. They're in her voice and run one to three sentences.
 - The model tags each reply with a facial expression and the sprite switches to match, even mid-reply. Invented tags such as `[smug]` map to the closest real sprite.
 - A fitting voice clip from the game plays when her expression changes, with mute and volume controls.
 - You can choose from 20 backgrounds. She knows where you are and notices when you move.
 - Each message is matched by meaning against 1,976 of her lines from the game (retrieval-augmented generation). The closest lines go along with it, so she talks about people and events the way she did in the story.
-- Lasting facts you mention, such as your name, job or pets, are saved and come back in later conversations. Long chats are summarized to fit the model's context window.
-- You can browse, reopen and delete past conversations, read the full log, and see or delete what she remembers.
-- `start.cmd` installs what's missing, starts Ollama, offers to download the models and opens the app. The EXIT button unloads the models and shuts everything down.
+- Lasting facts you mention, such as your name, job, or pets, are saved and come back in later conversations. Long chats are summarized to fit the model's context window.
+- You can browse, reopen, and delete past conversations, read the full log, and see or delete what she remembers.
+- `start.cmd` installs what's missing, starts Ollama, offers to download the models, and opens the app. The EXIT button unloads the models and shuts everything down.
 
 ## Tech stack
 
@@ -26,7 +26,7 @@ The model runs on your graphics card with [Ollama](https://ollama.com), and conv
 | Backend | Node.js 24 (runs TypeScript natively, built-in SQLite), Hono web framework |
 | AI | Ollama, [Rocinante-X 12B](https://huggingface.co/TheDrummer/Rocinante-X-12B-v1-GGUF) (a Mistral Nemo roleplay finetune), Q5_K_M quantization; [nomic-embed-text](https://ollama.com/library/nomic-embed-text) for retrieval |
 | Images | sharp, for on-demand background thumbnails |
-| Data | SQLite: conversations, messages, summaries, memories and cached embeddings |
+| Data | SQLite: conversations, messages, summaries, memories, and cached embeddings |
 
 The project is about 3,400 lines of TypeScript and CSS, type-checked in strict mode, with three packages on the server.
 
@@ -59,9 +59,9 @@ flowchart TB
 How a reply gets to the screen:
 
 1. The page sends your message and the current background.
-2. The server saves the message and finds her lines closest to it in meaning. It builds the prompt from the character sheet, what she remembers about you, a summary of older messages, the scene, the recent conversation and the recalled lines.
+2. The server saves the message and finds her lines closest to it in meaning. It builds the prompt from the character sheet, what she remembers about you, a summary of older messages, the scene, the recent conversation, and the recalled lines.
 3. Ollama streams the reply back. A streaming parser pulls out the expression tags and sends text and expression changes to the page as newline-delimited JSON.
-4. The page types the text into the dialogue box, swaps the sprite and plays a voice clip.
+4. The page types the text into the dialogue box, swaps the sprite, and plays a voice clip.
 5. Background jobs then update the conversation summary and pick out new memories, one at a time.
 
 ## Engineering notes
@@ -72,7 +72,7 @@ The character sheet goes at the start of the conversation, where it stays identi
 
 ### Prompt changes for Rocinante-X
 
-Rocinante-X was trained without system prompts. With the character sheet sent as one, it narrated her actions in the second person, wrote 84-word replies and invented its own expression tags. I moved the sheet into the conversation and restated the main rules at the end, which brought replies down to 33 words with valid tags and third-person actions:
+Rocinante-X was trained without system prompts. With the character sheet sent as one, it narrated her actions in the second person, wrote 84-word replies, and invented its own expression tags. I moved the sheet into the conversation and restated the main rules at the end, which brought replies down to 33 words with valid tags and third-person actions:
 
 | | Before | After |
 | --- | --- | --- |
@@ -115,7 +115,7 @@ On an RTX 4070 SUPER (12 GB):
 - The page recovers on its own if the server starts late or a conversation is deleted while it's open.
 - Static files are revalidated with `If-Modified-Since` (304 responses), and requests are guarded against path traversal.
 - Shutdown requires a custom header, so other websites can't trigger it.
-- The server only listens on this computer, only answers to `localhost` (which stops DNS rebinding) and only takes messages as JSON, so other devices and websites can't reach your chats.
+- The server only listens on this computer, only answers to `localhost` (which stops DNS rebinding), and only takes messages as JSON, so other devices and websites can't reach your chats.
 - Flash attention and an 8-bit context cache save about 600 MB of video memory, which keeps the model from spilling out of a 12 GB card. The launcher sets them when it starts Ollama. If Ollama is already running, set `OLLAMA_FLASH_ATTENTION=1` and `OLLAMA_KV_CACHE_TYPE=q8_0` as environment variables.
 
 ## Privacy and content
@@ -125,7 +125,7 @@ Everything stays on your computer. This app only uses the internet on the first 
 - Conversations and memories are stored unencrypted in `data/chat.db`, so anyone with access to your files can read them.
 - She saves lasting facts you mention about yourself automatically. You can see and delete them under CHATS.
 - Deleting a conversation or memory removes it from the app, but traces can stay in the database file. To erase everything, delete the `data` folder while the app is stopped.
-- AK-12 is a fictional character played by an AI model. Replies can be inaccurate and can include mature themes, so this is meant for adults. Don't rely on them for advice.
+- AK-12 is a fictional character played by an AI model. Replies can be inaccurate and can include mature themes. Don't rely on them for advice.
 - The models are downloaded separately from Ollama and Hugging Face and are covered by their own licenses.
 
 ## Getting started
@@ -167,7 +167,7 @@ This runs the server and the page with live reloading at http://localhost:5173. 
 | --- | --- |
 | `npm run dev` | Server and page with live reloading |
 | `npm run typecheck` | Strict type checking of the server and the page |
-| `npm test` | Tests for the reply parser, stream reader and host check |
+| `npm test` | Tests for the reply parser, stream reader, and host check |
 | `npm run build` | Builds the page into `dist/` |
 | `npm start` | Runs the server, which also serves the built page, on http://localhost:3001 |
 | `npm run launch` | The launcher behind `start.cmd` |
@@ -201,7 +201,7 @@ Copy `.env.example` to `.env` and change what you need. Every setting is optiona
 | `characters/ak12/expressions.json` | What each sprite looks like, so the model picks fitting expressions. |
 | `characters/ak12/voices/` + `voices.json` | Her voice clips (Japanese, from the game), grouped by expression. |
 | `backgrounds/` + `scenes.json` | Background images and what each one shows. Add or remove files and reload the page. |
-| `server/` | The Node server: chat API, prompt building, reply parsing, memory, thumbnails and shutdown. |
+| `server/` | The Node server: chat API, prompt building, reply parsing, memory, thumbnails, and shutdown. |
 | `web/` | The React frontend. |
 | `shared/` | Types and helpers used by both. |
 | `scripts/` | The one-click launcher and the packaging script. |
@@ -215,11 +215,11 @@ Run this in the development copy:
 npm run package
 ```
 
-It makes a ready-to-run copy in `release/chatAK12` and `release/chatAK12.zip`, with the full source, the page prebuilt, a short user guide and this documentation. Whoever gets it unpacks the zip and double-clicks `start.cmd`. Conversations, memories and `.env` are never included.
+It makes a ready-to-run copy in `release/chatAK12` and `release/chatAK12.zip`, with the full source, the page prebuilt, a short user guide, and this documentation. Whoever gets it unpacks the zip and double-clicks `start.cmd`. Conversations, memories, and `.env` are never included.
 
 ## Credits
 
-- *Girls' Frontline* characters, artwork and voice lines belong to MICA Team and Sunborn Network. This is a non-commercial fan project, not affiliated with or endorsed by them. Sprites, backgrounds and voice clips came from the game and the [IOP Wiki](https://iopwiki.com).
+- *Girls' Frontline* characters, artwork, and voice lines belong to MICA Team and Sunborn Network. This is a non-commercial fan project, not affiliated with or endorsed by them. Sprites, backgrounds, and voice clips came from the game and the [IOP Wiki](https://iopwiki.com).
 - AK-12's lines were extracted with [GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract), which pulls its data from [gf-data-us](https://github.com/gf-data-tools/gf-data-us).
 - [Rocinante-X 12B](https://huggingface.co/TheDrummer/Rocinante-X-12B-v1-GGUF) by TheDrummer.
 - If you hold rights to any of these assets and want them removed, open an issue and I'll take them down.

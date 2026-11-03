@@ -1,5 +1,5 @@
 @echo off
-rem Double-click to start chatAK12: checks Ollama and the model, builds, starts and opens the app.
+rem Double-click to start chatAK12: checks Ollama and the model, builds, starts, and opens the app.
 title chatAK12
 cd /d "%~dp0"
 

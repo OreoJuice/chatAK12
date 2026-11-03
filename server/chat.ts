@@ -45,7 +45,7 @@ function sceneFor(conversationId: number, background: string | undefined) {
 }
 
 /**
- * Adds the sheet, reminder and recalled lines to the conversation. Folded, the sheet goes in the
+ * Adds the sheet, reminder, and recalled lines to the conversation. Folded, the sheet goes in the
  * first message, which stays cached, and the reminder with the latest. Recalled lines change every
  * turn, so they always go with the latest. Mistral templates need the user to speak first, so a
  * history opening with a reply gets the sheet as its own turn.

@@ -81,7 +81,7 @@ remembers about you are kept in the \`data\` folder, which is created on first u
 ## How it works
 
 [DOCUMENTATION.md](DOCUMENTATION.md) covers the features, architecture, engineering notes, all the
-settings and how to work on the code. The page comes prebuilt, and \`start.cmd\` rebuilds it after you
+settings, and how to work on the code. The page comes prebuilt, and \`start.cmd\` rebuilds it after you
 change anything in \`web\`.
 
 ## Credits
@@ -92,7 +92,7 @@ its data from [gf-data-us](https://github.com/gf-data-tools/gf-data-us).
 
 ## License
 
-The source code is under the [MIT License](LICENSE). *Girls' Frontline* characters, artwork and voice
+The source code is under the [MIT License](LICENSE). *Girls' Frontline* characters, artwork, and voice
 lines belong to MICA Team and Sunborn Network and are not covered by it. This is a non-commercial fan
 project, not affiliated with or endorsed by them.
 `,
