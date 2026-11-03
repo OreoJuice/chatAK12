@@ -118,6 +118,16 @@ On an RTX 4070 SUPER (12 GB):
 - The server only listens on this computer, only answers to `localhost` (which stops DNS rebinding) and only takes messages as JSON, so other devices and websites can't reach your chats.
 - Flash attention and an 8-bit context cache save about 600 MB of video memory, which keeps the model from spilling out of a 12 GB card. The launcher sets them when it starts Ollama. If Ollama is already running, set `OLLAMA_FLASH_ATTENTION=1` and `OLLAMA_KV_CACHE_TYPE=q8_0` as environment variables.
 
+## Privacy and content
+
+Everything stays on your computer. This app only uses the internet on the first run, to download packages and models.
+
+- Conversations and memories are stored unencrypted in `data/chat.db`, so anyone with access to your files can read them.
+- She saves lasting facts you mention about yourself automatically. You can see and delete them under CHATS.
+- Deleting a conversation or memory removes it from the app, but traces can stay in the database file. To erase everything, delete the `data` folder while the app is stopped.
+- AK-12 is a fictional character played by an AI model. Replies can be inaccurate and can include mature themes, so this is meant for adults. Don't rely on them for advice.
+- The models are downloaded separately from Ollama and Hugging Face and are covered by their own licenses.
+
 ## Getting started
 
 ### Requirements
@@ -212,6 +222,7 @@ It makes a ready-to-run copy in `release/chatAK12` and `release/chatAK12.zip`, w
 - *Girls' Frontline* characters, artwork and voice lines belong to MICA Team and Sunborn Network. This is a non-commercial fan project, not affiliated with or endorsed by them. Sprites, backgrounds and voice clips came from the game and the [IOP Wiki](https://iopwiki.com).
 - AK-12's lines were extracted with [GFL-Character-Dialogue-Extract](https://github.com/OreoJuice/GFL-Character-Dialogue-Extract), which pulls its data from [gf-data-us](https://github.com/gf-data-tools/gf-data-us).
 - [Rocinante-X 12B](https://huggingface.co/TheDrummer/Rocinante-X-12B-v1-GGUF) by TheDrummer.
+- If you hold rights to any of these assets and want them removed, open an issue and I'll take them down.
 
 ## License
 
